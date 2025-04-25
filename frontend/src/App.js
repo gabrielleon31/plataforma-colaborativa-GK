@@ -1,24 +1,54 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+
+import Chat from './Chat';
+import Dashboard from './Dashboard';
+import Projects from './Projects';
+import Tasks from './Tasks';
+import Files from './Files';
+import Login from './Login';
+import PrivateRoute from './PrivateRoute';
+import AdminPanel from './AdminPanel';
+import './admin-panel.css';
+
+function Navigation() {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    navigate("/login");
+  };
+
+  return (
+    <nav style={{ marginBottom: '20px' }}>
+      <Link to="/login">Login</Link> |{" "}
+      <Link to="/chat">Chat</Link> |{" "}
+      <Link to="/dashboard">Dashboard</Link> |{" "}
+      <Link to="/projects">Proyectos</Link> |{" "}
+      <Link to="/tasks">Tareas</Link> |{" "}
+      <Link to="/files">Archivos</Link> |{" "}
+      <button onClick={handleLogout}>Cerrar sesión</button>
+    </nav>
+  );
+}
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <Navigation />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
+          <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/projects" element={<PrivateRoute><Projects /></PrivateRoute>} />
+          <Route path="/tasks" element={<PrivateRoute><Tasks /></PrivateRoute>} />
+          <Route path="/files" element={<PrivateRoute><Files /></PrivateRoute>} />
+          <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/admin" element={<PrivateRoute><AdminPanel /></PrivateRoute>} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
